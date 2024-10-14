@@ -23,6 +23,7 @@
 
     <build>
         <plugins>
+            <!-- Spring Boot Maven Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -34,6 +35,17 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <!-- Maven Compiler Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version> <!-- 确保使用较新的插件版本 -->
+                <configuration>
+                    <source>${java.version}</source> <!-- 设置 Java 源代码版本 -->
+                    <target>${java.version}</target> <!-- 设置 Java 字节码版本 -->
+                </configuration>
             </plugin>
         </plugins>
     </build>
