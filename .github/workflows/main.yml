@@ -25,15 +25,12 @@ jobs:
       - name: Build with Maven
         run: mvn clean package
 
-      # 4. 将项目上传到 EC2 实例
-      - name: Deploy to EC2 ${{ secrets.EC2_HOST }}  ${{ secrets.EC2_KEY }}
-        uses: appleboy/scp-action@v0.1.0
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
-          key: ${{ secrets.EC2_KEY }}
-          source: "target/demo-1.0-SNAPSHOT.jar"
-          target: "/home/ec2-user/"
+      # 4. 设置 SSH Key 和上传文件
+      - name: Set up SSH Key and deploy
+        run: |
+          echo "${{ secrets.EC2_KEY }}" > key.pem
+          chmod 600 key.pem
+          scp -i key.pem target/demo-1.0-SNAPSHOT.jar ec2-user@${{ secrets.EC2_HOST }}:/home/ec2-user/
 
   deploy:
     needs: build
@@ -42,11 +39,5 @@ jobs:
     steps:
       # 1. 连接到 EC2 实例并启动应用
       - name: SSH to EC2 and run Spring Boot
-        uses: appleboy/ssh-action@v0.1.0
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
-          key: ${{ secrets.EC2_KEY }}
-          script: |
-            pkill -f 'java -jar' || true
-            nohup java -jar /home/ec2-user/demo-1.0-SNAPSHOT.jar > app.log 2>&1 &
+        run: |
+          ssh -i key.pem ec2-user@${{ secrets.EC2_HOST }} "pkill -f 'java -jar' || true && nohup java -jar /home/ec2-user/demo-1.0-SNAPSHOT.jar > app.log 2>&1 &"
