@@ -18,7 +18,7 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'  # Java 发行版
+          distribution: 'temurin'
           java-version: '17'
 
       # 3. 构建 Spring Boot 项目
@@ -28,12 +28,13 @@ jobs:
       # 4. 设置 SSH Key 并上传文件
       - name: Set up SSH Key and deploy
         run: |
-          # 将 GitHub Secrets 中的 SSH 私钥写入 key.pem 文件
           echo "${{ secrets.EC2_KEY }}" > key.pem
-          # 确保私钥文件权限设置为 600
+          # 确保私钥文件已正确写入
+          cat key.pem
+          # 确保设置权限为 600
           chmod 600 key.pem
-          # 列出 key.pem 文件信息，确认文件存在且权限正确
-          ls -la key.pem
+          # 列出当前目录的文件，确认 key.pem 存在
+          ls -la
           # 使用 SCP 上传 JAR 文件到 EC2 实例
           scp -o StrictHostKeyChecking=no -i key.pem target/demo-1.0-SNAPSHOT.jar ec2-user@${{ secrets.EC2_HOST }}:/home/ec2-user/
 
@@ -45,5 +46,4 @@ jobs:
       # 1. 连接到 EC2 实例并启动 Spring Boot 应用
       - name: SSH to EC2 and run Spring Boot
         run: |
-          # 使用 SSH 连接 EC2 并启动 Spring Boot 应用
           ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@${{ secrets.EC2_HOST }} "pkill -f 'java -jar' || true && nohup java -jar /home/ec2-user/demo-1.0-SNAPSHOT.jar > app.log 2>&1 &"
