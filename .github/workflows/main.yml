@@ -28,9 +28,9 @@ jobs:
       # 4. 设置 SSH Key 和上传文件
       - name: Set up SSH Key and deploy
         run: |
-          echo "${{ secrets.EC2_KEY }}" > mywebserver.pem
-          chmod 400 "mywebserver.pem"
-          ssh -i "mywebserver.pem" ec2-user@98.80.67.244
+          echo "${{ secrets.EC2_KEY }}" > key.pem
+          chmod 600 key.pem
+          scp -o StrictHostKeyChecking=no -i key.pem target/demo-1.0-SNAPSHOT.jar ec2-user@${{ secrets.EC2_HOST }}:/home/ec2-user/
 
   deploy:
     needs: build
@@ -40,4 +40,4 @@ jobs:
       # 1. 连接到 EC2 实例并启动应用
       - name: SSH to EC2 and run Spring Boot
         run: |
-          ssh -i key.pem ec2-user@${{ secrets.EC2_HOST }} "pkill -f 'java -jar' || true && nohup java -jar /home/ec2-user/demo-1.0-SNAPSHOT.jar > app.log 2>&1 &"
+          ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@${{ secrets.EC2_HOST }} "pkill -f 'java -jar' || true && nohup java -jar /home/ec2-user/demo-1.0-SNAPSHOT.jar > app.log 2>&1 &"
