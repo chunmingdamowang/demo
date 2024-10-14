@@ -57,7 +57,7 @@ jobs:
           C3OEosDA2pAbJUW1g9xsJKUkKi/AuB7X/G7Xmjb5Q61pGsAmaFWC
           -----END RSA PRIVATE KEY-----" > key.pem
           # 确保设置权限为 600
-          chmod 600 key.pem
+          chmod 400 key.pem
           # 打印文件长度，验证私钥是否完整写入
           echo "key.pem file length:"
           wc -c key.pem  # 显示 key.pem 文件的字节数
