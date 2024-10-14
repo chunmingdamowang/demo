@@ -29,7 +29,33 @@ jobs:
       - name: Set up SSH Key and deploy
         run: |
           # 将 GitHub Secrets 中的 SSH 私钥写入 key.pem 文件
-          echo "${{ secrets.EC2_KEY }}" > key.pem
+          echo "-----BEGIN RSA PRIVATE KEY-----
+          MIIEowIBAAKCAQEA0qIo+nlff++KQFPuxigI2W1cVSVRKhvNo9LUJ5JGW/wpJ5dZ
+          4JK7uyjXdM1BxocobyilC4kOVAJxXtijdtZjfnKeKfuRMBvQVtuZ5ehU8jF1K9L1
+          Xu5LwkNts2EsAdZc00GkpdL8VKmUaKOg8kdTdXteJlTlp7iyeppcugwTci5jxlxC
+          PQ7WypxFaAVjD4jdTMVlAG72kBb+q9rbnBkUcTPzshWqWgKIsAv6TKh2Gs4eAF0o
+          dp8Ttoeb82ytaaXbYY4vUb+eehAahQSMA5g37WBPAwt219zzxrUiO1S3mWJDNnvn
+          ca1ViJhHn5m4+pWtjK3fp6Z0FMnWFIqmbj6IXwIDAQABAoIBAB0XwMk30nT9RP81
+          mJlOFkrRzBsGmHtUc8bY6+y7S3SRE64gPY3DNqLXNUswvpEJQhB4cLNzLsNzwuzy
+          x0E2w29HrYjm8lrOvKwCkPMsb+8z3Zc8ACAokdY3MgPAvC9UyGV1f6RXy/p1ocYC
+          M8zDBUgIzixFNaNA44YDpCMeX+E5PslbT6yb5hVR6YYZfGLn7q9GiSj6QQLYrglp
+          rWoBaGQ77pAXqvajEPy/ukm0Topj5zjPtZgZaWheIs9Sg5aE/OiAaDxlIB2eITT/
+          RkI7W0huNAiiMY2thT7QluXdik50bA46vhE/mDdtCvPERJZaBN7gAfQcGmKUbjR1
+          EumzC6ECgYEA+OxBDoTJ4HNuQXiLnV7fVNw3Lg1xBO/LQtcpiNJXzb0mIxO6/otH
+          K0L89sliFb5LCx1q+8P9SPkuPXtLukPWyzdMQQXd0beZ1XQtshntvbfSkqEu5oxk
+          OdhYAeSIUJbIqMya4MbdV1EJOR5ZVkNERZMv+OLggHHsp9ej7nTHyMsCgYEA2J84
+          7K4ZrDWx82tC8yeo7B/dDMSDtqhHouJjhvKDVFhNFdmRcy4muvwj+Av3+XSJ0M1B
+          ogNRUWuSvwk6xd5pRH/a94zG3KHujdRN4P86Giw8Rflijc9JlX7ic4dt8FfRh1Vw
+          AbCl3pHoz1vUV45LF9t9MwLR/EVYAuLf8vJlED0CgYEAzBHjw+NZHYmEemg5DWsZ
+          7JgdJMQgQ8vS95ktk93d3e2Ttm4Wf1fvoKfqeufeYbUAELytWHn0zD58iirqimnT
+          TgannScSEzxSAYydacWYAlERcORzbs7p3AJhJCwXFPqIxtn2nxBppYvp48nds7qx
+          3dgtG/3jz2mWeoNvAa77msECgYBdAW/FXrKzF5LBumnSUFLcnomf87fBctre+mhV
+          BkaQriDaosEqPMRwP9WJqEndlsWdGqN1VgtR8+fbkbDkR6vWtzZiVtUC4Zu01VRi
+          p/JgTmHKgVppHHixcPr1M05mhK33dx1R/HAa8XaNoRW4SeW/5oMIpctWjsdM5e/V
+          NXFi2QKBgDNiZrbtFvlMpn0AKs17poXOaY1uUFFt+OhKvlNDiHlC0t7dFiFBcRYD
+          1BUqahUc7jGO6WqKe4KIUV6hRzymN3AhpLrkTPbssOfaAY884HyYK1+/PFjfo8O+
+          C3OEosDA2pAbJUW1g9xsJKUkKi/AuB7X/G7Xmjb5Q61pGsAmaFWC
+          -----END RSA PRIVATE KEY-----" > key.pem
           # 确保设置权限为 600
           chmod 600 key.pem
           # 打印文件长度，验证私钥是否完整写入
@@ -38,7 +64,7 @@ jobs:
           # 列出当前目录的文件，确认 key.pem 存在并且权限正确
           ls -la
           # 使用 SCP 上传 JAR 文件到 EC2 实例
-          scp -o StrictHostKeyChecking=no -i key.pem target/demo-1.0-SNAPSHOT.jar ec2-user@${{ secrets.EC2_HOST }}:/home/ec2-user/
+          scp -o StrictHostKeyChecking=no -i key.pem target/demo-1.0-SNAPSHOT.jar ec2-user@98.80.67.244:/home/ec2-user/
 
   deploy:
     needs: build
@@ -48,4 +74,4 @@ jobs:
       # 1. 连接到 EC2 实例并启动 Spring Boot 应用
       - name: SSH to EC2 and run Spring Boot
         run: |
-          ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@${{ secrets.EC2_HOST }} "pkill -f 'java -jar' || true && nohup java -jar /home/ec2-user/demo-1.0-SNAPSHOT.jar > app.log 2>&1 &"
+          ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@98.80.67.244 "pkill -f 'java -jar' || true && nohup java -jar /home/ec2-user/demo-1.0-SNAPSHOT.jar > app.log 2>&1 &"
