@@ -28,9 +28,13 @@ jobs:
       # 4. 设置 SSH Key 并上传文件
       - name: Set up SSH Key and deploy
         run: |
+          # 将 GitHub Secrets 中的 SSH 私钥写入 key.pem 文件
           echo "${{ secrets.EC2_KEY }}" > key.pem
           # 确保私钥文件已正确写入
-          cat key.pem
+          echo "First 5 lines of key.pem:"
+          head -n 20 key.pem  # 打印私钥文件的前5行
+          echo "Last 5 lines of key.pem:"
+          tail -n 25 key.pem  # 打印私钥文件的最后5行
           # 确保设置权限为 600
           chmod 600 key.pem
           # 列出当前目录的文件，确认 key.pem 存在
