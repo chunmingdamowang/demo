@@ -31,7 +31,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}  # EC2 实例的 Public IP
           username: ec2-user  # EC2 用户名，默认是 ec2-user
           key: ${{ secrets.EC2_KEY }}  # 存储在 GitHub Secrets 中的 SSH 私钥
-          source: "target/your-app.jar"  # 要上传的文件
+          source: "target/demo-1.0-SNAPSHOT.jar"  # 要上传的文件
           target: "/home/ec2-user/"  # 上传到 EC2 的路径
 
   deploy:
@@ -48,4 +48,4 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script: |
             pkill -f 'java -jar' || true  # 停止先前的运行实例
-            nohup java -jar /home/ec2-user/your-app.jar > app.log 2>&1 &
+            nohup java -jar /home/ec2-user/demo-1.0-SNAPSHOT.jar > app.log 2>&1 &
