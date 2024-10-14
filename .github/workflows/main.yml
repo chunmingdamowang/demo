@@ -30,7 +30,7 @@ jobs:
         run: |
           echo "${{ secrets.EC2_KEY }}" > mywebserver.pem
           chmod 400 "mywebserver.pem"
-          ssh -i "mywebserver.pem" ec2-user@98.80.67.244:/home/ec2-user/
+          ssh -i "mywebserver.pem" ec2-user@98.80.67.244
 
   deploy:
     needs: build
